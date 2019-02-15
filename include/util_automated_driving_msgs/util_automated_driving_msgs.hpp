@@ -273,6 +273,52 @@ bool angularAccelValid(const automated_driving_msgs::MotionState& motionState);
  * @return true if the accel is valid, false otherwise.*/
 bool accelValid(const automated_driving_msgs::MotionState& motionState);
 
+/**
+ * @brief frameIdsSet Checks if all frameIds in an objectStateArray are set (non-empty).
+ * @param objectStateArray objectStateArray to be checked.
+ * @param missingInformation String containing information about which frameIds are missing.
+ * @return true if all frameIds are set, false otherwise. */
+bool frameIdsSet(const automated_driving_msgs::ObjectStateArray& objectStateArray, std::string& missingInformation);
+
+/**
+ * @brief frameIdsValid Checks if all frameIds in an objectStateArray coincide.
+ * @param objectStateArray objectStateArray to be checked.
+ * @param missingInformation String containing information about which frameIds are missing.
+ * @return true if all frameIds are valid, i.e. coincide, false otherwise. */
+bool frameIdsValid(const automated_driving_msgs::ObjectStateArray& objectStateArray, std::string& missingInformation);
+
+/**
+ * @brief firstStampsAreEqual Checks if the first stamp of every submessage is the same.
+ * @param objectStateArray objectStateArray to be checked.
+ * @param missingInformation String containing information about which stamps are inconsistent.
+ * @return true if all first stamps are the same, i.e. coincide, false otherwise.
+ */
+bool firstStampsAreEqual(const automated_driving_msgs::ObjectStateArray& objectStateArray,
+                         std::string& missingInformation);
+
+/**
+ * @brief stampdsValid Checks if all stamps are within a windows of timeRangeSecs seconds.
+ * @param objectStateArray objectStateArray to be checked.
+ * @param timeRangeSecs allowed time range in seconds.
+ * @param missingInformation String containing information about why stamps are not within rangeg.
+ * @return true if all stampds are valid, i.e. within a range of 60 seconds, false otherwise. */
+bool stampsWithinTimeRange(const automated_driving_msgs::ObjectStateArray& objectStateArray,
+                           const double& timeRangeSecs,
+                           std::string& missingInformation);
+
+/**
+ * @brief predictionSynchroniyzed Checks if of all time stamps of all predictions of objects are equal.
+ * @param objectStateArray objectStateArray to be checked.
+ * @param predictionTimeStepMilliseconds desired time between two motion states within the predicted trajectory
+ * @param missingInformation String containing information about which frameIds are missing.
+ * @return true if all time stamps are syncronized, false otherwise.
+ */
+bool predictionStampsSynchronized(const automated_driving_msgs::ObjectStateArray& objectStateArray,
+                                  const int64_t& predictionTimeStepMilliseconds,
+                                  const double& predictionHorizonSeconds,
+                                  std::string& missingInformation);
+
+
 } // namespace util_automated_driving_msgs::checks
 
 namespace computations {
@@ -290,6 +336,75 @@ namespace computations {
  * @return true if the second MotionState has been changed, false if not or on failure. */
 bool incorporatePrecedingDataToMotionstate(const automated_driving_msgs::MotionState& precedingMS,
                                            automated_driving_msgs::MotionState& presentMS);
+
+
+/**
+ * @brief getInterpolationIndexAndScale
+ * @param traj Current trajectory where interpolation is done.
+ * @param interpolationTimestamp Time stamp that should be interpolated.
+ * @param searchStartIndex Index where the previous result was found, makes search faster.
+ * @param index Resulting index (of the motion state), that is right ahead of the interpolationTimestamp.
+ * @param scale Resulting scale, telling relative time between index and the next motion state
+ * @param valid Returns true, if all computations could be done without problems.
+ * @param errorMsg Contains a error string, in case any errors occur.
+ */
+void getInterpolationIndexAndScale(const automated_driving_msgs::Trajectory& traj,
+                                   const ros::Time& interpolationTimestamp,
+                                   const size_t& searchStartIndex,
+                                   size_t& index,
+                                   double& scale,
+                                   bool& valid,
+                                   std::string& errorMsg);
+
+/**
+ * @brief interpolateAlongTrajectory !!assuming constant velocity!!
+ * @param traj Current trajectory where interpolation is done.
+ * @param interpolationTimestamp Time stamp that should be interpolated.
+ * @param searchStartIndex Index where the previous result was found, makes search faster.
+ * @param interpolatedMotionState Resulting interpolated motion state.
+ * @param index Index where the result was found, serves as searchStartIndex for the next interpolation.
+ * @param valid Returns true, if all computations could be done without problems.
+ * @param errorMsg Contains a error string, in case any errors occur.
+ */
+void interpolateAlongTrajectory(const automated_driving_msgs::Trajectory& traj,
+                                const ros::Time& interpolationTimestamp,
+                                const size_t& searchStartIndex,
+                                automated_driving_msgs::MotionState& interpolatedMotionState,
+                                size_t& index,
+                                bool& valid,
+                                std::string& errorMsg);
+
+/**
+ * @brief synchronizePredictionTimestamps !!assuming constant velocity!!
+ * @param unsyncedTrajectory
+ * @param timeStepMilliseconds
+ * @param predictionHorizonSeconds
+ * @param syncedTrajectory
+ * @param valid
+ * @param errorMsg
+ */
+void synchronizePredictionTimestamps(const automated_driving_msgs::Trajectory& unsyncedTrajectory,
+                                     const int32_t& timeStepMilliseconds,
+                                     const double& predictionHorizonSeconds,
+                                     automated_driving_msgs::Trajectory& syncedTrajectory,
+                                     bool& valid,
+                                     std::string& errorMsg);
+/**
+ * @brief synchronizePredictionTimestamps !!assuming constant velocity!!
+ * @param unsyncedObjectStates
+ * @param timeStepMilliseconds
+ * @param predictionHorizonSeconds
+ * @param syncedObjectStates
+ * @param valid
+ * @param errorMsg
+ */
+void synchronizePredictionTimestamps(const automated_driving_msgs::ObjectStateArray& unsyncedObjectStates,
+                                     const int32_t& timeStepMilliseconds,
+                                     const double& predictionHorizonSeconds,
+                                     automated_driving_msgs::ObjectStateArray& syncedObjectStates,
+                                     bool& valid,
+                                     std::string& errorMsg);
+
 
 } // namespace util_automated_driving_msgs::computations
 
