@@ -641,6 +641,26 @@ void interpolateAlongTrajectory(const automated_driving_msgs::Trajectory& traj,
     interpolatedMotionState.header.frame_id = traj.motion_states.at(0).header.frame_id;
 }
 
+
+std::vector<std_msgs::Header> generateSynchronizedHeaders(const std_msgs::Header& first_header,
+                                                          const int32_t& timeStepMilliseconds,
+                                                          const double& predictionHorizonSeconds) {
+
+    const int64_t timeStepNanoseconds = int64_t(timeStepMilliseconds) * 1000000;
+    const int predictionSteps = int(1000. / double(timeStepMilliseconds) * predictionHorizonSeconds) + 1;
+
+    std::vector<std_msgs::Header> headers;
+    headers.resize(predictionSteps);
+
+    for (int i = 0; i < predictionSteps; i++) {
+        headers[i] = first_header;
+        headers[i].stamp += ros::Duration().fromNSec(i * timeStepNanoseconds);
+    }
+
+    return headers;
+}
+
+
 void synchronizePredictionTimestamps(const automated_driving_msgs::Trajectory& unsyncedTrajectory,
                                      const int32_t& timeStepMilliseconds,
                                      const double& predictionHorizonSeconds,
@@ -652,14 +672,14 @@ void synchronizePredictionTimestamps(const automated_driving_msgs::Trajectory& u
     syncedTrajectory.probability = unsyncedTrajectory.probability;
     syncedTrajectory.motion_states.clear();
 
-    const int64_t timeStepNanoseconds = int64_t(timeStepMilliseconds) * 1000000;
-    const size_t predictionSteps = size_t(1000. / double(timeStepMilliseconds) * predictionHorizonSeconds) + 1;
+    auto headers = generateSynchronizedHeaders(unsyncedTrajectory.motion_states.front().header,
+                                               timeStepMilliseconds,
+                                               predictionHorizonSeconds);
 
     size_t indexOfPreviousInterpolation{0};
-    for (size_t i{0}; i < predictionSteps; i++) {
+    for (size_t i{0}; i < headers.size(); i++) {
         automated_driving_msgs::MotionState motionState;
-        ros::Time interpolationTimestamp =
-            unsyncedTrajectory.motion_states.front().header.stamp + ros::Duration().fromNSec(i * timeStepNanoseconds);
+        const ros::Time interpolationTimestamp = headers[i].stamp;
         util_automated_driving_msgs::computations::interpolateAlongTrajectory(unsyncedTrajectory,
                                                                               interpolationTimestamp,
                                                                               indexOfPreviousInterpolation,
@@ -670,7 +690,7 @@ void synchronizePredictionTimestamps(const automated_driving_msgs::Trajectory& u
         if (valid) {
             syncedTrajectory.motion_states.push_back(motionState);
         } else {
-            errorMsg += " (in step " + std::to_string(i) + " of " + std::to_string(predictionSteps) + ")";
+            errorMsg += " (in step " + std::to_string(i) + " of " + std::to_string(headers.size()) + ")";
             return;
         }
     }

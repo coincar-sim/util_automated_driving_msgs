@@ -375,6 +375,18 @@ void interpolateAlongTrajectory(const automated_driving_msgs::Trajectory& traj,
                                 std::string& errorMsg);
 
 /**
+ * @brief generateSynchronizedHeaders
+ * @param first_header
+ * @param timeStepMilliseconds
+ * @param predictionHorizonSeconds
+ * @return
+ */
+std::vector<std_msgs::Header> generateSynchronizedHeaders(const std_msgs::Header& first_header,
+                                                          const int32_t& timeStepMilliseconds,
+                                                          const double& predictionHorizonSeconds);
+
+
+/**
  * @brief synchronizePredictionTimestamps !!assuming constant velocity!!
  * @param unsyncedTrajectory
  * @param timeStepMilliseconds
