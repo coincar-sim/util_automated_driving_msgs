@@ -679,7 +679,7 @@ void synchronizePredictionTimestamps(const automated_driving_msgs::Trajectory& u
     size_t indexOfPreviousInterpolation{0};
     for (size_t i{0}; i < headers.size(); i++) {
         automated_driving_msgs::MotionState motionState;
-        const ros::Time interpolationTimestamp = headers[i].stamp;
+        const ros::Time interpolationTimestamp = headers.at(i).stamp;
         util_automated_driving_msgs::computations::interpolateAlongTrajectory(unsyncedTrajectory,
                                                                               interpolationTimestamp,
                                                                               indexOfPreviousInterpolation,
