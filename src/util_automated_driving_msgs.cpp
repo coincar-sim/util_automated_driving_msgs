@@ -642,7 +642,7 @@ void interpolateAlongTrajectory(const automated_driving_msgs::Trajectory& traj,
 }
 
 
-std::vector<std_msgs::Header> generateSynchronizedHeaders(const std_msgs::Header& first_header,
+std::vector<std_msgs::Header> generateSynchronizedHeaders(const std_msgs::Header& firstHeader,
                                                           const int32_t& timeStepMilliseconds,
                                                           const double& predictionHorizonSeconds) {
 
@@ -653,7 +653,7 @@ std::vector<std_msgs::Header> generateSynchronizedHeaders(const std_msgs::Header
     headers.resize(predictionSteps);
 
     for (int i = 0; i < predictionSteps; i++) {
-        headers[i] = first_header;
+        headers[i] = firstHeader;
         headers[i].stamp += ros::Duration().fromNSec(i * timeStepNanoseconds);
     }
 

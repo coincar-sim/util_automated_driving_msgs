@@ -381,7 +381,7 @@ void interpolateAlongTrajectory(const automated_driving_msgs::Trajectory& traj,
  * @param predictionHorizonSeconds
  * @return
  */
-std::vector<std_msgs::Header> generateSynchronizedHeaders(const std_msgs::Header& first_header,
+std::vector<std_msgs::Header> generateSynchronizedHeaders(const std_msgs::Header& firstHeader,
                                                           const int32_t& timeStepMilliseconds,
                                                           const double& predictionHorizonSeconds);
 
