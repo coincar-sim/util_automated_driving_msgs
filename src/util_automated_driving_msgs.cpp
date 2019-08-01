@@ -79,7 +79,7 @@ automated_driving_msgs::ObjectStateArray removeObjectFromObjectStateArray(
     return outputObjectArray;
 }
 
-} // namespace util_automated_driving_msgs::conversions
+} // namespace conversions
 
 namespace checks {
 
@@ -350,10 +350,10 @@ bool predictionStampsSynchronized(const automated_driving_msgs::ObjectStateArray
     for (const automated_driving_msgs::ObjectState& object : objectStateArray.objects) {
         for (const automated_driving_msgs::Trajectory& traj : object.motion_prediction.trajectories) {
             if (traj.motion_states.size() != predictionSteps) {
-                missingInformation += "Object[id=" + std::to_string(object.object_id) + "] Trajectory[id=" +
-                                      std::to_string(traj.id) + "] has wrong number of motion_states. Expected " +
-                                      std::to_string(predictionSteps) + " but found " +
-                                      std::to_string(traj.motion_states.size()) + ". Moving to next trajectory;  ";
+                missingInformation +=
+                    "Object[id=" + std::to_string(object.object_id) + "] Trajectory[id=" + std::to_string(traj.id) +
+                    "] has wrong number of motion_states. Expected " + std::to_string(predictionSteps) + " but found " +
+                    std::to_string(traj.motion_states.size()) + ". Moving to next trajectory;  ";
                 synced = false;
                 continue;
             }
@@ -380,14 +380,14 @@ bool predictionStampsSynchronized(const automated_driving_msgs::ObjectStateArray
     }
     if (!synced) {
         missingInformation += "(start=" + std::to_string(objectStateArray.header.stamp.sec) + "s" +
-                              std::to_string(objectStateArray.header.stamp.nsec) + "ns, " + "step=" +
-                              std::to_string(predictionTimeStepNanoseconds) + "ns)";
+                              std::to_string(objectStateArray.header.stamp.nsec) + "ns, " +
+                              "step=" + std::to_string(predictionTimeStepNanoseconds) + "ns)";
     }
     return synced;
 }
 
 
-} // namespace util_automated_driving_msgs::checks
+} // namespace checks
 
 namespace computations {
 
@@ -584,8 +584,8 @@ void getInterpolationIndexAndScale(const automated_driving_msgs::Trajectory& tra
     if (interpolationTimestamp > traj.motion_states.back().header.stamp) {
         errorMsg = "interpolationTimestamp out of range: bigger than traj.motion_states.back().header.stamp; "
                    "interpolationTimestamp=" +
-                   std::to_string(interpolationTimestamp.toSec()) + ", trajEndTime=" +
-                   std::to_string(traj.motion_states.back().header.stamp.toSec());
+                   std::to_string(interpolationTimestamp.toSec()) +
+                   ", trajEndTime=" + std::to_string(traj.motion_states.back().header.stamp.toSec());
         valid = false;
         return;
     }
@@ -672,9 +672,8 @@ void synchronizePredictionTimestamps(const automated_driving_msgs::Trajectory& u
     syncedTrajectory.probability = unsyncedTrajectory.probability;
     syncedTrajectory.motion_states.clear();
 
-    auto headers = generateSynchronizedHeaders(unsyncedTrajectory.motion_states.front().header,
-                                               timeStepMilliseconds,
-                                               predictionHorizonSeconds);
+    auto headers = generateSynchronizedHeaders(
+        unsyncedTrajectory.motion_states.front().header, timeStepMilliseconds, predictionHorizonSeconds);
 
     size_t indexOfPreviousInterpolation{0};
     for (size_t i{0}; i < headers.size(); i++) {
@@ -744,6 +743,6 @@ void synchronizePredictionTimestamps(const automated_driving_msgs::ObjectStateAr
 }
 
 
-} // namespace util_automated_driving_msgs::computations
+} // namespace computations
 
 } // namespace util_automated_driving_msgs
