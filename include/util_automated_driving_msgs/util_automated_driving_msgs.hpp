@@ -167,7 +167,7 @@ inline void diffQuotientOrientation(const geometry_msgs::Pose::_orientation_type
     // tf2::fromMsg(rpy, result);
     result = util_geometry_msgs::conversions::toMsg<geometry_msgs::Vector3>(rpy);
 }
-}
+} // namespace
 
 namespace util_automated_driving_msgs {
 
@@ -199,7 +199,7 @@ automated_driving_msgs::ObjectStateArray removeObjectFromObjectStateArray(
     const automated_driving_msgs::ObjectStateArray& inputObjectArray, uint32_t objectId);
 
 
-} // namespace util_automated_driving_msgs::conversions
+} // namespace conversions
 
 namespace checks {
 
@@ -319,7 +319,7 @@ bool predictionStampsSynchronized(const automated_driving_msgs::ObjectStateArray
                                   std::string& missingInformation);
 
 
-} // namespace util_automated_driving_msgs::checks
+} // namespace checks
 
 namespace computations {
 
@@ -418,6 +418,6 @@ void synchronizePredictionTimestamps(const automated_driving_msgs::ObjectStateAr
                                      std::string& errorMsg);
 
 
-} // namespace util_automated_driving_msgs::computations
+} // namespace computations
 
 } // namespace util_automated_driving_msgs
