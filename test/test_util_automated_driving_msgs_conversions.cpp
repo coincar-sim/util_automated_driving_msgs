@@ -64,7 +64,7 @@ TEST_F(UtilAutomatedDrivingMsgsConversions, objectStateFromObjectStateArray) {
     bool foundAndUnique;
     automated_driving_msgs::ObjectState os = objectStateFromObjectStateArray(osaPtr_, 1, foundAndUnique);
     EXPECT_TRUE(foundAndUnique);
-    EXPECT_EQ(1, os.object_id);
+    EXPECT_EQ(1u, os.object_id);
 
     automated_driving_msgs::ObjectState osNotFound = objectStateFromObjectStateArray(osaPtr_, 5, foundAndUnique);
     EXPECT_FALSE(foundAndUnique);
@@ -72,8 +72,8 @@ TEST_F(UtilAutomatedDrivingMsgsConversions, objectStateFromObjectStateArray) {
 
 TEST_F(UtilAutomatedDrivingMsgsConversions, removeObjectFromObjectStateArray) {
     automated_driving_msgs::ObjectStateArray osaNew = removeObjectFromObjectStateArray(osa_, 3);
-    EXPECT_EQ(3, osaNew.objects.size());
-    EXPECT_EQ(1, osaNew.objects.at(0).object_id);
-    EXPECT_EQ(2, osaNew.objects.at(1).object_id);
-    EXPECT_EQ(4, osaNew.objects.at(2).object_id);
+    EXPECT_EQ(3u, osaNew.objects.size());
+    EXPECT_EQ(1u, osaNew.objects.at(0).object_id);
+    EXPECT_EQ(2u, osaNew.objects.at(1).object_id);
+    EXPECT_EQ(4u, osaNew.objects.at(2).object_id);
 }
