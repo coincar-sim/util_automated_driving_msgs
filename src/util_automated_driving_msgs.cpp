@@ -79,6 +79,31 @@ automated_driving_msgs::ObjectStateArray removeObjectFromObjectStateArray(
     return outputObjectArray;
 }
 
+ProbabilityMap convertObjectClassification(const automated_driving_msgs::ObjectClassification& classification) {
+    static constexpr uint64_t m1 =
+        ros::message_traits::MD5Sum<automated_driving_msgs::ObjectClassification>::static_value1;
+    static constexpr uint64_t m2 =
+        ros::message_traits::MD5Sum<automated_driving_msgs::ObjectClassification>::static_value2;
+    static_assert(m1 == 0x2870d8643da9a667ULL, "Hash of automated_driving_msgs::ObjectClassification changed");
+    static_assert(m2 == 0x0bb7ff8151c06889ULL, "Hash of automated_driving_msgs::ObjectClassification changed");
+    auto types = {automated_driving_msgs::ObjectClassification::CAR,
+                  automated_driving_msgs::ObjectClassification::TRUCK,
+                  automated_driving_msgs::ObjectClassification::BICYCLE,
+                  automated_driving_msgs::ObjectClassification::MOTORBIKE,
+                  automated_driving_msgs::ObjectClassification::PEDESTRIAN,
+                  automated_driving_msgs::ObjectClassification::OTHER_STATIC,
+                  automated_driving_msgs::ObjectClassification::UNCLASSIFIED,
+                  automated_driving_msgs::ObjectClassification::OTHER_DYNAMIC,
+                  automated_driving_msgs::ObjectClassification::VIRTUAL_OBJECT};
+    ProbabilityMap ret;
+    for (const auto& type : types) {
+        ret.emplace(type, 0.);
+    }
+    for (const auto& cl : classification.classes_with_probabilities) {
+        ret[cl.classification] = static_cast<double>(cl.probability);
+    }
+    return ret;
+}
 } // namespace conversions
 
 namespace checks {

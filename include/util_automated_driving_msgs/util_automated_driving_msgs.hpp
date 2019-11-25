@@ -49,6 +49,8 @@ namespace {
 
 static const double QUATERNION_TOLERANCE = 0.1f;
 
+/** Mapping from the classification of an object to the probability of this classification */
+using ProbabilityMap = std::map<int, double>;
 
 /** @brief Calculating the componentwise sum of boost::array
  * @param[in] The first Array
@@ -198,7 +200,12 @@ automated_driving_msgs::ObjectState objectStateFromObjectStateArray(
 automated_driving_msgs::ObjectStateArray removeObjectFromObjectStateArray(
     const automated_driving_msgs::ObjectStateArray& inputObjectArray, uint32_t objectId);
 
-
+/**
+ * @brief convert
+ * @param[in] classification the ObjectClassification to be converted.
+ * @return a ProbabilityMap which map the classification to a probability. All available classes are set.
+ */
+ProbabilityMap convertObjectClassification(const automated_driving_msgs::ObjectClassification& classification);
 } // namespace conversions
 
 namespace checks {

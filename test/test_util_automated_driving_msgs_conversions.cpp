@@ -77,3 +77,18 @@ TEST_F(UtilAutomatedDrivingMsgsConversions, removeObjectFromObjectStateArray) {
     EXPECT_EQ(2u, osaNew.objects.at(1).object_id);
     EXPECT_EQ(4u, osaNew.objects.at(2).object_id);
 }
+
+TEST(UtilAutomatedDrivingMsgsConversionsNoFixture, convertObjectClassification) {
+    auto os = boost::make_shared<automated_driving_msgs::ObjectState>();
+    automated_driving_msgs::ClassWithProbability c1, c2;
+    c1.classification = automated_driving_msgs::ObjectClassification::BICYCLE;
+    c1.probability = 0.3f;
+    c2.classification = automated_driving_msgs::ObjectClassification::MOTORBIKE;
+    c2.probability = 0.7f;
+    os->classification.classes_with_probabilities.emplace_back(c1);
+    os->classification.classes_with_probabilities.emplace_back(c2);
+    auto res = convertObjectClassification(os->classification);
+    EXPECT_FLOAT_EQ(static_cast<float>(res.at(automated_driving_msgs::ObjectClassification::BICYCLE)), 0.3f);
+    EXPECT_FLOAT_EQ(static_cast<float>(res.at(automated_driving_msgs::ObjectClassification::MOTORBIKE)), 0.7f);
+    EXPECT_FLOAT_EQ(static_cast<float>(res.at(automated_driving_msgs::ObjectClassification::PEDESTRIAN)), 0.0f);
+}
