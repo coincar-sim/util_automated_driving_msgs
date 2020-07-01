@@ -47,7 +47,7 @@
 
 namespace {
 
-static const double QUATERNION_TOLERANCE = 0.1f;
+constexpr double QuaternionTolerance = 0.1f;
 
 /** Mapping from the classification of an object to the probability of this classification */
 using ProbabilityMap = std::map<int, double>;
@@ -57,12 +57,11 @@ using ProbabilityMap = std::map<int, double>;
  * @param[in] The second Array
  * @param[out] Array with componentwise sum.
  * @return void */
-template <typename _Scalar, std::size_t size>
-inline void cWiseAdd(const boost::array<_Scalar, size>& array0,
-                     const boost::array<_Scalar, size>& array1,
-                     boost::array<_Scalar, size>& result) {
-    std::transform(array0.begin(), array0.end(), array1.begin(), result.begin(), std::plus<_Scalar>());
-    return;
+template <typename Scalar, std::size_t Size>
+inline void cWiseAdd(const boost::array<Scalar, Size>& array0,
+                     const boost::array<Scalar, Size>& array1,
+                     boost::array<Scalar, Size>& result) {
+    std::transform(array0.begin(), array0.end(), array1.begin(), result.begin(), std::plus<Scalar>());
 }
 
 /** @brief Calculating the componentwise division of boost::array
@@ -71,15 +70,14 @@ inline void cWiseAdd(const boost::array<_Scalar, size>& array0,
  * @param[in] The second Array, denominator
  * @param[out] Array with componentwise division.
  * @return void */
-template <typename _Scalar, std::size_t size>
-inline void cWiseDivide(const boost::array<_Scalar, size>& numerator,
-                        const boost::array<_Scalar, size>& denominator,
-                        boost::array<_Scalar, size>& result) {
-    if (std::any_of(denominator.begin(), denominator.end(), [](_Scalar i) { return i == 0; })) {
+template <typename Scalar, std::size_t Size>
+inline void cWiseDivide(const boost::array<Scalar, Size>& numerator,
+                        const boost::array<Scalar, Size>& denominator,
+                        boost::array<Scalar, Size>& result) {
+    if (std::any_of(denominator.begin(), denominator.end(), [](Scalar i) { return i == 0; })) {
         throw std::runtime_error("Division by zero.");
     }
-    std::transform(numerator.begin(), numerator.end(), denominator.begin(), result.begin(), std::divides<_Scalar>());
-    return;
+    std::transform(numerator.begin(), numerator.end(), denominator.begin(), result.begin(), std::divides<Scalar>());
 }
 
 /** @brief Calculating the componentwise division of boost::array with constant denominator
@@ -88,18 +86,17 @@ inline void cWiseDivide(const boost::array<_Scalar, size>& numerator,
  * @param[in] A scalar, denominator
  * @param[out] Array with componentwise division.
  * @return void */
-template <typename _Scalar, std::size_t size>
-inline void cWiseDivide(const boost::array<_Scalar, size>& numerator,
-                        const _Scalar& denominator,
-                        boost::array<_Scalar, size>& result) {
+template <typename Scalar, std::size_t Size>
+inline void cWiseDivide(const boost::array<Scalar, Size>& numerator,
+                        const Scalar& denominator,
+                        boost::array<Scalar, Size>& result) {
     if (denominator == 0) {
         throw std::runtime_error("Division by zero.");
     }
     std::transform(numerator.begin(),
                    numerator.end(),
                    result.begin(),
-                   std::bind(std::divides<_Scalar>(), std::placeholders::_1, denominator));
-    return;
+                   std::bind(std::divides<Scalar>(), std::placeholders::_1, denominator));
 }
 
 /** @brief Calculating the componentwise difference of 3D Vectors. x/y/z component-by-component
@@ -114,7 +111,6 @@ inline void cWiseDiffXYZ(const Tin& xyzVector0, const Tin& xyzVector1, Tout& res
     result.x = xyzVector0.x - xyzVector1.x;
     result.y = xyzVector0.y - xyzVector1.y;
     result.z = xyzVector0.z - xyzVector1.z;
-    return;
 }
 
 /** @brief Calculating the differential quotient of 3D Vectors. x/y/z component-by-component
@@ -132,7 +128,6 @@ inline void diffQuotientXYZ(const Tin& xyzVector0, const Tin& xyzVector1, const 
     result.x = (xyzVector1.x - xyzVector0.x) / deltaTime;
     result.y = (xyzVector1.y - xyzVector0.y) / deltaTime;
     result.z = (xyzVector1.z - xyzVector0.z) / deltaTime;
-    return;
 }
 
 /** @brief Calculating the "differential quotient of rotation"
@@ -152,7 +147,9 @@ inline void diffQuotientOrientation(const geometry_msgs::Pose::_orientation_type
                                     const double deltaTime,
                                     geometry_msgs::Twist::_angular_type& result) {
 
-    Eigen::Quaternion<double> orientation0EQ, orientation1EQ;
+    Eigen::Quaternion<double> orientation0EQ;
+
+    Eigen::Quaternion<double> orientation1EQ;
     tf2::fromMsg(orientation0, orientation0EQ);
     tf2::fromMsg(orientation1, orientation1EQ);
     // util_geometry_msgs::conversions::fromMsg(orientation0, orientation0EQ);
@@ -189,7 +186,7 @@ automated_driving_msgs::ObjectState objectStateFromObjectStateArray(
  * @param[in] The object_id by which the searched ObjectState is defined.
  * @return the ObjectState from the ObjectStateArray defined by the object_id*/
 automated_driving_msgs::ObjectState objectStateFromObjectStateArray(
-    boost::shared_ptr<const automated_driving_msgs::ObjectStateArray> inputObjectArray,
+    const boost::shared_ptr<const automated_driving_msgs::ObjectStateArray>& inputObjectArray,
     uint32_t objectId,
     bool& foundAndUnique);
 
