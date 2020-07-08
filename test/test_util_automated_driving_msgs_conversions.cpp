@@ -41,37 +41,39 @@ protected:
     UtilAutomatedDrivingMsgsConversions() {
         automated_driving_msgs::ObjectState os;
         os.object_id = 1;
-        osa_.objects.push_back(os);
+        osa.objects.push_back(os);
 
         os.object_id = 2;
-        osa_.objects.push_back(os);
+        osa.objects.push_back(os);
 
         os.object_id = 3;
-        osa_.objects.push_back(os);
+        osa.objects.push_back(os);
 
         os.object_id = 4;
-        osa_.objects.push_back(os);
+        osa.objects.push_back(os);
 
-        osaPtr_ = boost::make_shared<automated_driving_msgs::ObjectStateArray>(osa_);
-        osaConstPtr_ = boost::make_shared<automated_driving_msgs::ObjectStateArray>(osa_);
+        osaPtr = boost::make_shared<automated_driving_msgs::ObjectStateArray>(osa);
+        osaConstPtr = boost::make_shared<automated_driving_msgs::ObjectStateArray>(osa);
     }
-    automated_driving_msgs::ObjectStateArray osa_;
-    automated_driving_msgs::ObjectStateArrayPtr osaPtr_;
-    automated_driving_msgs::ObjectStateArrayConstPtr osaConstPtr_;
+    automated_driving_msgs::ObjectStateArray osa; // NOLINT(cppcoreguidelines-non-private-member-variables-in-classes)
+    automated_driving_msgs::ObjectStateArrayPtr
+        osaPtr; // NOLINT(cppcoreguidelines-non-private-member-variables-in-classes)
+    automated_driving_msgs::ObjectStateArrayConstPtr
+        osaConstPtr; // NOLINT(cppcoreguidelines-non-private-member-variables-in-classes)
 };
 
 TEST_F(UtilAutomatedDrivingMsgsConversions, objectStateFromObjectStateArray) {
-    bool foundAndUnique;
-    automated_driving_msgs::ObjectState os = objectStateFromObjectStateArray(osaPtr_, 1, foundAndUnique);
+    bool foundAndUnique = false;
+    automated_driving_msgs::ObjectState os = objectStateFromObjectStateArray(osaPtr, 1, foundAndUnique);
     EXPECT_TRUE(foundAndUnique);
     EXPECT_EQ(1u, os.object_id);
 
-    automated_driving_msgs::ObjectState osNotFound = objectStateFromObjectStateArray(osaPtr_, 5, foundAndUnique);
+    automated_driving_msgs::ObjectState osNotFound = objectStateFromObjectStateArray(osaPtr, 5, foundAndUnique);
     EXPECT_FALSE(foundAndUnique);
 }
 
 TEST_F(UtilAutomatedDrivingMsgsConversions, removeObjectFromObjectStateArray) {
-    automated_driving_msgs::ObjectStateArray osaNew = removeObjectFromObjectStateArray(osa_, 3);
+    automated_driving_msgs::ObjectStateArray osaNew = removeObjectFromObjectStateArray(osa, 3);
     EXPECT_EQ(3u, osaNew.objects.size());
     EXPECT_EQ(1u, osaNew.objects.at(0).object_id);
     EXPECT_EQ(2u, osaNew.objects.at(1).object_id);
@@ -80,7 +82,8 @@ TEST_F(UtilAutomatedDrivingMsgsConversions, removeObjectFromObjectStateArray) {
 
 TEST(UtilAutomatedDrivingMsgsConversionsNoFixture, convertObjectClassification) {
     auto os = boost::make_shared<automated_driving_msgs::ObjectState>();
-    automated_driving_msgs::ClassWithProbability c1, c2;
+    automated_driving_msgs::ClassWithProbability c1;
+    automated_driving_msgs::ClassWithProbability c2;
     c1.classification = automated_driving_msgs::ObjectClassification::BICYCLE;
     c1.probability = 0.3f;
     c2.classification = automated_driving_msgs::ObjectClassification::MOTORBIKE;

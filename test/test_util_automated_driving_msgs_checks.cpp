@@ -33,42 +33,42 @@
 #include "util_automated_driving_msgs.hpp"
 
 using namespace util_automated_driving_msgs::checks;
-using covariance_type = geometry_msgs::PoseWithCovariance::_covariance_type;
+using CovarianceType = geometry_msgs::PoseWithCovariance::_covariance_type;
 
 TEST(UtilAutomatedDrivingMsgsChecks, motionStateValidationTest) {
 
-    covariance_type covNonSetValues_{-1, 0, 0, 0,  0, 0, 0, -1, 0, 0, 0,  0, 0, 0, -1, 0, 0, 0,
-                                     0,  0, 0, -1, 0, 0, 0, 0,  0, 0, -1, 0, 0, 0, 0,  0, 0, -1};
+    CovarianceType covNonSetValues{-1, 0, 0, 0,  0, 0, 0, -1, 0, 0, 0,  0, 0, 0, -1, 0, 0, 0,
+                                   0,  0, 0, -1, 0, 0, 0, 0,  0, 0, -1, 0, 0, 0, 0,  0, 0, -1};
 
-    covariance_type covGroundTruthValues_{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-                                          0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-                                          0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+    CovarianceType covGroundTruthValues{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+                                        0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+                                        0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
 
-    covariance_type covArbitraryDiagValuesValid_{1, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0,
-                                                 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 6};
+    CovarianceType covArbitraryDiagValuesValid{1, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0,
+                                               0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 6};
 
-    covariance_type covArbitraryValuesValid_{11, 12, 13, 14, 15, 16, 12, 22, 23, 24, 25, 26, 13, 23, 33, 34, 35, 36,
-                                             14, 24, 34, 44, 45, 46, 15, 25, 35, 45, 55, 56, 16, 26, 36, 46, 56, 66};
+    CovarianceType covArbitraryValuesValid{11, 12, 13, 14, 15, 16, 12, 22, 23, 24, 25, 26, 13, 23, 33, 34, 35, 36,
+                                           14, 24, 34, 44, 45, 46, 15, 25, 35, 45, 55, 56, 16, 26, 36, 46, 56, 66};
 
-    covariance_type covInvalidUnsymmetric_{1,  2,  3,  4,  5,  6,  7,  8,  9,  10, 11, 12, 13, 14, 15, 16, 17, 18,
-                                           19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36};
+    CovarianceType covInvalidUnsymmetric{1,  2,  3,  4,  5,  6,  7,  8,  9,  10, 11, 12, 13, 14, 15, 16, 17, 18,
+                                         19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36};
 
-    covariance_type covInvalidBelowZero_{-11, 12, 13, 14, 15, 16, 12, 22, 23, 24, 25, 26, 13, 23, 33, 34, 35, 36,
-                                         14,  24, 34, 44, 45, 46, 15, 25, 35, 45, 55, 56, 16, 26, 36, 46, 56, -66};
+    CovarianceType covInvalidBelowZero{-11, 12, 13, 14, 15, 16, 12, 22, 23, 24, 25, 26, 13, 23, 33, 34, 35, 36,
+                                       14,  24, 34, 44, 45, 46, 15, 25, 35, 45, 55, 56, 16, 26, 36, 46, 56, -66};
 
-    covariance_type covGroundTruthValuesExceptX1_{-1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-                                                  0.0,  0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-                                                  0.0,  0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+    CovarianceType covGroundTruthValuesExceptX1{-1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+                                                0.0,  0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+                                                0.0,  0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
 
-    covariance_type covGroundTruthValuesExceptX2_{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,  0.0, 0.0,
-                                                  0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -1.0, 0.0, 0.0,
-                                                  0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,  0.0, 0.0};
+    CovarianceType covGroundTruthValuesExceptX2{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,  0.0, 0.0,
+                                                0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -1.0, 0.0, 0.0,
+                                                0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,  0.0, 0.0};
 
     automated_driving_msgs::MotionState ms;
 
-    ms.pose.covariance = covNonSetValues_;
-    ms.twist.covariance = covNonSetValues_;
-    ms.accel.covariance = covNonSetValues_;
+    ms.pose.covariance = covNonSetValues;
+    ms.twist.covariance = covNonSetValues;
+    ms.accel.covariance = covNonSetValues;
     EXPECT_FALSE(poseValid(ms));
     EXPECT_FALSE(twistValid(ms));
     EXPECT_FALSE(accelValid(ms));
@@ -79,9 +79,9 @@ TEST(UtilAutomatedDrivingMsgsChecks, motionStateValidationTest) {
     EXPECT_FALSE(linearAccelValid(ms));
     EXPECT_FALSE(angularAccelValid(ms));
 
-    ms.pose.covariance = covGroundTruthValues_;
-    ms.twist.covariance = covGroundTruthValues_;
-    ms.accel.covariance = covGroundTruthValues_;
+    ms.pose.covariance = covGroundTruthValues;
+    ms.twist.covariance = covGroundTruthValues;
+    ms.accel.covariance = covGroundTruthValues;
     EXPECT_TRUE(poseValid(ms));
     EXPECT_TRUE(twistValid(ms));
     EXPECT_TRUE(accelValid(ms));
@@ -92,9 +92,9 @@ TEST(UtilAutomatedDrivingMsgsChecks, motionStateValidationTest) {
     EXPECT_TRUE(linearAccelValid(ms));
     EXPECT_TRUE(angularAccelValid(ms));
 
-    ms.pose.covariance = covArbitraryDiagValuesValid_;
-    ms.twist.covariance = covArbitraryDiagValuesValid_;
-    ms.accel.covariance = covArbitraryDiagValuesValid_;
+    ms.pose.covariance = covArbitraryDiagValuesValid;
+    ms.twist.covariance = covArbitraryDiagValuesValid;
+    ms.accel.covariance = covArbitraryDiagValuesValid;
     EXPECT_TRUE(poseValid(ms));
     EXPECT_TRUE(twistValid(ms));
     EXPECT_TRUE(accelValid(ms));
@@ -105,9 +105,9 @@ TEST(UtilAutomatedDrivingMsgsChecks, motionStateValidationTest) {
     EXPECT_TRUE(linearAccelValid(ms));
     EXPECT_TRUE(angularAccelValid(ms));
 
-    ms.pose.covariance = covArbitraryValuesValid_;
-    ms.twist.covariance = covArbitraryValuesValid_;
-    ms.accel.covariance = covArbitraryValuesValid_;
+    ms.pose.covariance = covArbitraryValuesValid;
+    ms.twist.covariance = covArbitraryValuesValid;
+    ms.accel.covariance = covArbitraryValuesValid;
     EXPECT_TRUE(poseValid(ms));
     EXPECT_TRUE(twistValid(ms));
     EXPECT_TRUE(accelValid(ms));
@@ -118,9 +118,9 @@ TEST(UtilAutomatedDrivingMsgsChecks, motionStateValidationTest) {
     EXPECT_TRUE(linearAccelValid(ms));
     EXPECT_TRUE(angularAccelValid(ms));
 
-    ms.pose.covariance = covInvalidUnsymmetric_;
-    ms.twist.covariance = covInvalidUnsymmetric_;
-    ms.accel.covariance = covInvalidUnsymmetric_;
+    ms.pose.covariance = covInvalidUnsymmetric;
+    ms.twist.covariance = covInvalidUnsymmetric;
+    ms.accel.covariance = covInvalidUnsymmetric;
     EXPECT_FALSE(poseValid(ms));
     EXPECT_FALSE(twistValid(ms));
     EXPECT_FALSE(accelValid(ms));
@@ -131,9 +131,9 @@ TEST(UtilAutomatedDrivingMsgsChecks, motionStateValidationTest) {
     EXPECT_FALSE(linearAccelValid(ms));
     EXPECT_FALSE(angularAccelValid(ms));
 
-    ms.pose.covariance = covInvalidBelowZero_;
-    ms.twist.covariance = covInvalidBelowZero_;
-    ms.accel.covariance = covInvalidBelowZero_;
+    ms.pose.covariance = covInvalidBelowZero;
+    ms.twist.covariance = covInvalidBelowZero;
+    ms.accel.covariance = covInvalidBelowZero;
     EXPECT_FALSE(poseValid(ms));
     EXPECT_FALSE(twistValid(ms));
     EXPECT_FALSE(accelValid(ms));
@@ -144,9 +144,9 @@ TEST(UtilAutomatedDrivingMsgsChecks, motionStateValidationTest) {
     EXPECT_FALSE(linearAccelValid(ms));
     EXPECT_FALSE(angularAccelValid(ms));
 
-    ms.pose.covariance = covGroundTruthValuesExceptX1_;
-    ms.twist.covariance = covGroundTruthValuesExceptX1_;
-    ms.accel.covariance = covGroundTruthValuesExceptX1_;
+    ms.pose.covariance = covGroundTruthValuesExceptX1;
+    ms.twist.covariance = covGroundTruthValuesExceptX1;
+    ms.accel.covariance = covGroundTruthValuesExceptX1;
     EXPECT_FALSE(poseValid(ms));
     EXPECT_FALSE(twistValid(ms));
     EXPECT_FALSE(accelValid(ms));
@@ -157,9 +157,9 @@ TEST(UtilAutomatedDrivingMsgsChecks, motionStateValidationTest) {
     EXPECT_FALSE(linearAccelValid(ms));
     EXPECT_TRUE(angularAccelValid(ms));
 
-    ms.pose.covariance = covGroundTruthValuesExceptX2_;
-    ms.twist.covariance = covGroundTruthValuesExceptX2_;
-    ms.accel.covariance = covGroundTruthValuesExceptX2_;
+    ms.pose.covariance = covGroundTruthValuesExceptX2;
+    ms.twist.covariance = covGroundTruthValuesExceptX2;
+    ms.accel.covariance = covGroundTruthValuesExceptX2;
     EXPECT_FALSE(poseValid(ms));
     EXPECT_FALSE(twistValid(ms));
     EXPECT_FALSE(accelValid(ms));
@@ -179,34 +179,34 @@ TEST(UtilAutomatedDrivingMsgsChecks, objectStateArrayValidationTest) {
     std::string missingInformationFrameIdsSet{};
     std::string missingInformationFrameIdsValid{};
     std::string missingInformationStampsValid{};
-    std::string id_valid = "map";
-    std::string id_false = "invalid";
-    ros::Time stamp_valid1{503};
-    ros::Time stamp_valid2{547};
-    ros::Time stamp_invalid{821};
+    std::string idValid = "map";
+    std::string idFalse = "invalid";
+    ros::Time stampValid1{503};
+    ros::Time stampValid2{547};
+    ros::Time stampInvalid{821};
     // objectStateArray
-    osa.header.frame_id = id_valid;
-    osa.header.stamp = stamp_valid1;
+    osa.header.frame_id = idValid;
+    osa.header.stamp = stampValid1;
     // objectState
     os.object_id = 0;
-    os.header.frame_id = id_valid;
-    os.header.stamp = stamp_valid1;
-    os.motion_state.header.frame_id = id_valid;
-    os.motion_state.header.stamp = stamp_valid1;
-    os.motion_state.child_frame_id = id_valid;
-    os.motion_prediction.header.frame_id = id_valid;
-    os.motion_prediction.header.stamp = stamp_valid1;
+    os.header.frame_id = idValid;
+    os.header.stamp = stampValid1;
+    os.motion_state.header.frame_id = idValid;
+    os.motion_state.header.stamp = stampValid1;
+    os.motion_state.child_frame_id = idValid;
+    os.motion_prediction.header.frame_id = idValid;
+    os.motion_prediction.header.stamp = stampValid1;
     // trajectories
     traj.id = 1;
     automated_driving_msgs::MotionState trajMs1;
-    trajMs1.header.frame_id = id_valid;
-    trajMs1.child_frame_id = id_valid;
-    trajMs1.header.stamp = stamp_valid1;
+    trajMs1.header.frame_id = idValid;
+    trajMs1.child_frame_id = idValid;
+    trajMs1.header.stamp = stampValid1;
     traj.motion_states.push_back(trajMs1);
     automated_driving_msgs::MotionState trajMs2;
-    trajMs2.header.frame_id = id_valid;
-    trajMs2.child_frame_id = id_valid;
-    trajMs2.header.stamp = stamp_valid2;
+    trajMs2.header.frame_id = idValid;
+    trajMs2.child_frame_id = idValid;
+    trajMs2.header.stamp = stampValid2;
     traj.motion_states.push_back(trajMs2);
     os.motion_prediction.trajectories.push_back(traj);
     osa.objects.push_back(os);
@@ -218,7 +218,7 @@ TEST(UtilAutomatedDrivingMsgsChecks, objectStateArrayValidationTest) {
     EXPECT_TRUE(stampsWithinTimeRange(osa, 60., missingInformationStampsValid));
     EXPECT_EQ("", missingInformationStampsValid);
 
-    osa.objects.begin()->motion_prediction.trajectories.begin()->motion_states.begin()->header.frame_id = id_false;
+    osa.objects.begin()->motion_prediction.trajectories.begin()->motion_states.begin()->header.frame_id = idFalse;
 
     EXPECT_TRUE(frameIdsSet(osa, missingInformationFrameIdsSet));
     EXPECT_EQ("", missingInformationFrameIdsSet);
@@ -230,8 +230,8 @@ TEST(UtilAutomatedDrivingMsgsChecks, objectStateArrayValidationTest) {
     EXPECT_TRUE(stampsWithinTimeRange(osa, 60., missingInformationStampsValid));
     EXPECT_EQ("", missingInformationStampsValid);
 
-    osa.objects.begin()->motion_prediction.trajectories.begin()->motion_states.begin()->header.frame_id = id_valid;
-    osa.objects.begin()->motion_prediction.trajectories.begin()->motion_states.at(1).header.stamp = stamp_invalid;
+    osa.objects.begin()->motion_prediction.trajectories.begin()->motion_states.begin()->header.frame_id = idValid;
+    osa.objects.begin()->motion_prediction.trajectories.begin()->motion_states.at(1).header.stamp = stampInvalid;
 
     EXPECT_TRUE(frameIdsSet(osa, missingInformationFrameIdsSet));
     EXPECT_EQ("", missingInformationFrameIdsSet);
@@ -240,7 +240,7 @@ TEST(UtilAutomatedDrivingMsgsChecks, objectStateArrayValidationTest) {
     EXPECT_FALSE(stampsWithinTimeRange(osa, 60., missingInformationStampsValid));
     EXPECT_EQ("Earliest time stamp: 503.000000, latest time stamp: 821.000000", missingInformationStampsValid);
 
-    osa.objects.begin()->motion_prediction.trajectories.begin()->motion_states.at(1).header.stamp = stamp_valid2;
+    osa.objects.begin()->motion_prediction.trajectories.begin()->motion_states.at(1).header.stamp = stampValid2;
     osa.objects.begin()->motion_prediction.trajectories.begin()->motion_states.at(1).header.frame_id.clear();
 
     EXPECT_FALSE(frameIdsSet(osa, missingInformationFrameIdsSet));
@@ -251,7 +251,7 @@ TEST(UtilAutomatedDrivingMsgsChecks, objectStateArrayValidationTest) {
     EXPECT_TRUE(stampsWithinTimeRange(osa, 60., missingInformationStampsValid));
     EXPECT_EQ("", missingInformationStampsValid);
 
-    osa.objects.begin()->motion_prediction.trajectories.begin()->motion_states.at(1).header.frame_id = id_valid;
+    osa.objects.begin()->motion_prediction.trajectories.begin()->motion_states.at(1).header.frame_id = idValid;
     osa.objects.begin()->motion_prediction.trajectories.begin()->motion_states.at(1).header.stamp = ros::Time{0};
 
     EXPECT_TRUE(frameIdsSet(osa, missingInformationFrameIdsSet));

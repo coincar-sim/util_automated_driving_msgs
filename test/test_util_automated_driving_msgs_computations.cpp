@@ -34,7 +34,7 @@
 
 using namespace util_automated_driving_msgs::computations;
 
-static const double DOUBLE_TOLERANCE = 10.e-9;
+static const double DoubleTolerance = 10.e-9;
 
 TEST(UtilAutomatedDrivingMsgsComputations, incorporatePrecedingDataToMotionstate) {
     automated_driving_msgs::MotionState ms0;
@@ -65,19 +65,20 @@ TEST(UtilAutomatedDrivingMsgsComputations, incorporatePrecedingDataToMotionstate
     EXPECT_TRUE(util_automated_driving_msgs::checks::accelValid(ms2));
     EXPECT_TRUE(util_automated_driving_msgs::checks::twistValid(ms2));
 
-    EXPECT_NEAR(1., ms2.twist.twist.linear.x, DOUBLE_TOLERANCE);
-    EXPECT_NEAR(0., ms2.twist.twist.linear.y, DOUBLE_TOLERANCE);
-    EXPECT_NEAR(0., ms2.twist.twist.linear.z, DOUBLE_TOLERANCE);
+    EXPECT_NEAR(1., ms2.twist.twist.linear.x, DoubleTolerance);
+    EXPECT_NEAR(0., ms2.twist.twist.linear.y, DoubleTolerance);
+    EXPECT_NEAR(0., ms2.twist.twist.linear.z, DoubleTolerance);
 
-    EXPECT_NEAR(0., ms2.accel.accel.linear.x, DOUBLE_TOLERANCE);
-    EXPECT_NEAR(0., ms2.accel.accel.linear.y, DOUBLE_TOLERANCE);
-    EXPECT_NEAR(0., ms2.accel.accel.linear.z, DOUBLE_TOLERANCE);
+    EXPECT_NEAR(0., ms2.accel.accel.linear.x, DoubleTolerance);
+    EXPECT_NEAR(0., ms2.accel.accel.linear.y, DoubleTolerance);
+    EXPECT_NEAR(0., ms2.accel.accel.linear.z, DoubleTolerance);
 }
 
 TEST(UtilAutomatedDrivingMsgsComputations, predictionStampSyncTest) {
 
     automated_driving_msgs::Trajectory traj{};
-    automated_driving_msgs::MotionState ms1, ms2;
+    automated_driving_msgs::MotionState ms1;
+    automated_driving_msgs::MotionState ms2;
 
     ms1.header.stamp = ros::Time(1000, 0);
     ms1.pose.pose.position.x = 2.;

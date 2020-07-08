@@ -30,6 +30,9 @@
 
 #include "util_automated_driving_msgs.hpp"
 
+#include <cmath>
+
+
 namespace util_automated_driving_msgs {
 
 namespace conversions {
@@ -40,25 +43,24 @@ automated_driving_msgs::ObjectState objectStateFromObjectStateArray(
     foundAndUnique = false;
     automated_driving_msgs::ObjectState objectState;
 
-    for (size_t i = 0; i < inputObjectArray.objects.size(); i++) {
-        if (inputObjectArray.objects[i].object_id == objectId) {
+    for (const auto& object : inputObjectArray.objects) {
+        if (object.object_id == objectId) {
 
             if (foundAndUnique) {
                 // if object already found, its id is not unique
                 foundAndUnique = false;
                 return objectState;
-            } else {
-                // if not found yet, it is found now
-                foundAndUnique = true;
-                objectState = inputObjectArray.objects[i];
             }
+            // if not found yet, it is found now
+            foundAndUnique = true;
+            objectState = object;
         }
     }
     return objectState;
 }
 
 automated_driving_msgs::ObjectState objectStateFromObjectStateArray(
-    boost::shared_ptr<const automated_driving_msgs::ObjectStateArray> inputObjectArray,
+    const boost::shared_ptr<const automated_driving_msgs::ObjectStateArray>& inputObjectArray,
     uint32_t objectId,
     bool& foundAndUnique) {
 
@@ -80,12 +82,12 @@ automated_driving_msgs::ObjectStateArray removeObjectFromObjectStateArray(
 }
 
 ProbabilityMap convertObjectClassification(const automated_driving_msgs::ObjectClassification& classification) {
-    static constexpr uint64_t m1 =
+    static constexpr uint64_t M1 =
         ros::message_traits::MD5Sum<automated_driving_msgs::ObjectClassification>::static_value1;
-    static constexpr uint64_t m2 =
+    static constexpr uint64_t M2 =
         ros::message_traits::MD5Sum<automated_driving_msgs::ObjectClassification>::static_value2;
-    static_assert(m1 == 0x2870d8643da9a667ULL, "Hash of automated_driving_msgs::ObjectClassification changed");
-    static_assert(m2 == 0x0bb7ff8151c06889ULL, "Hash of automated_driving_msgs::ObjectClassification changed");
+    static_assert(M1 == 0x2870d8643da9a667ULL, "Hash of automated_driving_msgs::ObjectClassification changed");
+    static_assert(M2 == 0x0bb7ff8151c06889ULL, "Hash of automated_driving_msgs::ObjectClassification changed");
     auto types = {automated_driving_msgs::ObjectClassification::CAR,
                   automated_driving_msgs::ObjectClassification::TRUCK,
                   automated_driving_msgs::ObjectClassification::BICYCLE,
@@ -172,7 +174,7 @@ bool frameIdsSet(const automated_driving_msgs::ObjectStateArray& objectStateArra
         missingInformation += "objectStateArray.header.frame_id is not set; ";
         frameIdsSet = false;
     }
-    for (auto& objectState : objectStateArray.objects) {
+    for (const auto& objectState : objectStateArray.objects) {
         std::string objectPrefix = "objectStateArray.object[id=" + std::to_string(objectState.object_id) + "]: ";
         // Check objectState
         if (objectState.header.frame_id.empty()) {
@@ -194,10 +196,10 @@ bool frameIdsSet(const automated_driving_msgs::ObjectStateArray& objectStateArra
                 missingInformation += objectPrefix + "motion_prediction.header.frame_id is not set; ";
                 frameIdsSet = false;
             }
-            for (auto& trajectory : objectState.motion_prediction.trajectories) {
+            for (const auto& trajectory : objectState.motion_prediction.trajectories) {
                 std::string trajectoryPrefix =
                     objectPrefix + "motion_prediction.trajectories[id=" + std::to_string(trajectory.id) + "]: ";
-                for (auto& motionState : trajectory.motion_states) {
+                for (const auto& motionState : trajectory.motion_states) {
                     if (motionState.header.frame_id.empty()) {
                         missingInformation +=
                             trajectoryPrefix +
@@ -224,10 +226,10 @@ bool frameIdsValid(const automated_driving_msgs::ObjectStateArray& objectStateAr
     bool frameIdsValid = true;
     missingInformation.clear();
     std::string objectStateArrayHeaderFrameId = objectStateArray.header.frame_id;
-    auto comparisionString([objectStateArrayHeaderFrameId](std::string currentFrameId) {
+    auto comparisionString([objectStateArrayHeaderFrameId](const std::string& currentFrameId) {
         return "(" + objectStateArrayHeaderFrameId + " != " + currentFrameId + "); ";
     });
-    for (auto& objectState : objectStateArray.objects) {
+    for (const auto& objectState : objectStateArray.objects) {
         std::string objectPrefix = "objectStateArray.object[id=" + std::to_string(objectState.object_id) + "]: ";
         // Check objectState
         if (objectStateArrayHeaderFrameId != objectState.header.frame_id) {
@@ -248,10 +250,10 @@ bool frameIdsValid(const automated_driving_msgs::ObjectStateArray& objectStateAr
                                       comparisionString(objectState.motion_prediction.header.frame_id);
                 frameIdsValid = false;
             }
-            for (auto& trajectory : objectState.motion_prediction.trajectories) {
+            for (const auto& trajectory : objectState.motion_prediction.trajectories) {
                 std::string trajectoryPrefix =
                     objectPrefix + "motion_prediction.trajectories[id=" + std::to_string(trajectory.id) + "]: ";
-                for (auto& motionState : trajectory.motion_states) {
+                for (const auto& motionState : trajectory.motion_states) {
                     if (objectStateArrayHeaderFrameId != motionState.header.frame_id) {
                         missingInformation +=
                             trajectoryPrefix +
@@ -286,7 +288,7 @@ bool stampsWithinTimeRange(const automated_driving_msgs::ObjectStateArray& objec
         }
     });
 
-    for (auto& objectState : objectStateArray.objects) {
+    for (const auto& objectState : objectStateArray.objects) {
         // Check objectState
         updateStamps(objectState.header.stamp);
         // Check motion_state
@@ -294,8 +296,8 @@ bool stampsWithinTimeRange(const automated_driving_msgs::ObjectStateArray& objec
         // Check motion_prediction
         if (!objectState.motion_prediction.trajectories.empty()) {
             updateStamps(objectState.motion_prediction.header.stamp);
-            for (auto& trajectory : objectState.motion_prediction.trajectories) {
-                for (auto& motionState : trajectory.motion_states) {
+            for (const auto& trajectory : objectState.motion_prediction.trajectories) {
+                for (const auto& motionState : trajectory.motion_states) {
                     updateStamps(motionState.header.stamp);
                 }
             }
@@ -323,7 +325,7 @@ bool firstStampsAreEqual(const automated_driving_msgs::ObjectStateArray& objectS
     const ros::Time& refStamp = objectStateArray.header.stamp;
     missingInformation.clear();
 
-    for (auto& objectState : objectStateArray.objects) {
+    for (const auto& objectState : objectStateArray.objects) {
 
         if (objectState.header.stamp != refStamp) {
             stampsValid = false;
@@ -344,7 +346,7 @@ bool firstStampsAreEqual(const automated_driving_msgs::ObjectStateArray& objectS
                                       "].motion_prediction is inconsistent. ";
             }
 
-            for (auto& trajectory : objectState.motion_prediction.trajectories) {
+            for (const auto& trajectory : objectState.motion_prediction.trajectories) {
 
                 if (trajectory.motion_states.front().header.stamp != refStamp) {
                     stampsValid = false;
@@ -382,17 +384,17 @@ bool predictionStampsSynchronized(const automated_driving_msgs::ObjectStateArray
                 synced = false;
                 continue;
             }
-            for (size_t it_ms{0}; it_ms < traj.motion_states.size(); it_ms++) {
-                const automated_driving_msgs::MotionState& mS = traj.motion_states.at(it_ms);
+            for (size_t itMs{0}; itMs < traj.motion_states.size(); itMs++) {
+                const automated_driving_msgs::MotionState& mS = traj.motion_states.at(itMs);
                 // Check if timestamps coincide with prediction time steps
-                int64_t predictionDeltaTimeNanoseconds = int(it_ms) * predictionTimeStepNanoseconds;
+                int64_t predictionDeltaTimeNanoseconds = int(itMs) * predictionTimeStepNanoseconds;
                 ros::Time predictionTimeExpected =
                     objectStateArray.header.stamp + ros::Duration().fromNSec(predictionDeltaTimeNanoseconds);
 
                 if (predictionTimeExpected != mS.header.stamp) {
                     missingInformation +=
                         "Object[id=" + std::to_string(object.object_id) + "] Trajectory[id=" + std::to_string(traj.id) +
-                        "] MotionState[#=" + std::to_string(it_ms) + "]=" + std::to_string(mS.header.stamp.sec) + "s" +
+                        "] MotionState[#=" + std::to_string(itMs) + "]=" + std::to_string(mS.header.stamp.sec) + "s" +
                         std::to_string(mS.header.stamp.nsec) + "ns " +
                         "deviates from policy start+n*predictionTimeStep! Expected: " +
                         std::to_string(predictionTimeExpected.sec) + "s" + std::to_string(predictionTimeExpected.nsec) +
@@ -457,7 +459,9 @@ static bool incorporatePrecedingPoseToTwist(const automated_driving_msgs::Motion
     baseFrame.orientation.w = 1.0;
 
     // Transform preceding Pose from base frame in childFrame defined by presentMS.header.child_frame_id
-    geometry_msgs::PoseWithCovariance transformedPose0, transformedPose1;
+    geometry_msgs::PoseWithCovariance transformedPose0;
+
+    geometry_msgs::PoseWithCovariance transformedPose1;
     util_geometry_msgs::transformations::rereferencePoseWithCovariance(
         precedingMS.pose, baseFrame, presentChildFrame, transformedPose0);
 
@@ -629,7 +633,6 @@ void getInterpolationIndexAndScale(const automated_driving_msgs::Trajectory& tra
 
     errorMsg = "Pedantic: This should not happen!";
     valid = false;
-    return;
 }
 
 
@@ -641,7 +644,7 @@ void interpolateAlongTrajectory(const automated_driving_msgs::Trajectory& traj,
                                 bool& valid,
                                 std::string& errorMsg) {
 
-    double scale;
+    double scale = NAN;
 
     getInterpolationIndexAndScale(traj, interpolationTimestamp, searchStartIndex, index, scale, valid, errorMsg);
 
@@ -746,10 +749,10 @@ void synchronizePredictionTimestamps(const automated_driving_msgs::ObjectStateAr
         //            ";
         //        }
 
-        for (size_t it_traj{0}; it_traj < unsyncedOS.motion_prediction.trajectories.size(); it_traj++) {
+        for (size_t itTraj{0}; itTraj < unsyncedOS.motion_prediction.trajectories.size(); itTraj++) {
             automated_driving_msgs::Trajectory syncedTraj;
             bool validTemp{false};
-            synchronizePredictionTimestamps(unsyncedOS.motion_prediction.trajectories.at(it_traj),
+            synchronizePredictionTimestamps(unsyncedOS.motion_prediction.trajectories.at(itTraj),
                                             timeStepMilliseconds,
                                             predictionHorizonSeconds,
                                             syncedTraj,
@@ -759,7 +762,7 @@ void synchronizePredictionTimestamps(const automated_driving_msgs::ObjectStateAr
                 syncedObjectState.motion_prediction.trajectories.push_back(syncedTraj);
             } else {
                 valid = false;
-                errorMsg += " (in traj_id=" + std::to_string(unsyncedOS.motion_prediction.trajectories.at(it_traj).id) +
+                errorMsg += " (in traj_id=" + std::to_string(unsyncedOS.motion_prediction.trajectories.at(itTraj).id) +
                             " of obj_id=" + std::to_string(unsyncedOS.object_id) + ")";
             }
         }
