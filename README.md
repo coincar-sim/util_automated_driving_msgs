@@ -1,3 +1,5 @@
+[![Build Status](https://api.travis-ci.org/coincar-sim/util_automated_driving_msgs.svg)](https://travis-ci.org/coincar-sim/util_automated_driving_msgs)
+
 # util_automated_driving_msgs
 
 Library providing utility functions for **automated_driving_msgs**.
